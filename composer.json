@@ -1,0 +1,27 @@
+{
+    "name": "diegocaprioli/laravel-helpers",
+    "description": "A simple Mailchimp API client for the Laravel framework.",
+    "keywords": ["mailchimp", "api", "php", "v3", "laravel"],
+    "authors": [
+        {
+            "name": "Diego Caprioli",
+            "email": "diegocaprioli@gmail.com"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "~6.0",
+        "illuminate/support": "~5.0",
+        "vlucas/phpdotenv": "~2.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.5.*"
+    },
+    "autoload": {        
+        "psr-4": {
+            "DiegoCaprioli\\Larachimp\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}

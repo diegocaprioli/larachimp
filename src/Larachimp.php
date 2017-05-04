@@ -1,7 +1,8 @@
 <?php namespace DiegoCaprioli\Larachimp;
 
-use GuzzleHttp\Client;
-use Illuminate\Support\Collection;
+use \GuzzleHttp\Client;
+use \Illuminate\Contracts\Logging\Log;
+use \Illuminate\Support\Collection;
 
 class Larachimp {
 
@@ -22,6 +23,12 @@ class Larachimp {
      */
     private $client;
 
+    /**
+     * The logeer to user
+     * @var Illuminate\Support\Facades\Log
+     */
+    private $log;
+
 
     /**
      * Creates a new Larachimp instance
@@ -29,7 +36,7 @@ class Larachimp {
      * @param string $apikey
      * @param array $clientOptions
      */
-    public function __construct($apikey = '', $baseuri = '', $clientOptions = [])
+    public function __construct($apikey = '', $baseuri = '', $clientOptions = [], Log $log = null)
     {
         $this->apikey = $apikey;
         $this->baseuri = $baseuri;
@@ -39,6 +46,22 @@ class Larachimp {
         ];
     }
 
+    protected function logRequest($method, $resource, array $options = [])
+    {           
+        if (!empty($this->log)) {
+            $this->log->info('Mailchimp API Request = ' . var_export([
+                compact('resource', 'method', 'options')
+            ], true));
+        }        
+    }
+
+    protected function logResponse(Collection $collection)
+    {
+        if (!empty($this->log)) {
+            $array = $collection->toArray();
+            $this->log->info('Mailchimp API Response = ' . var_export($array, true));
+        }        
+    }
 
     /**
      * Makes an API request
@@ -49,17 +72,23 @@ class Larachimp {
      * 
      * @return Illuminate\Support\Collection
      */
-    public function request($resource, $method, $options = [])
+    public function request($method, $resource, array $options = [])
     {
 
     	$options = array_merge($this->options, $options);
-    	$response = $this->client->request($method, $this->baseuri . $resource, $options);
 
+        $resource = $this->baseuri . $resource;
+
+        $this->logRequest($method, $resource , $options);
+
+    	$response = $this->client->request($method, $resource, $options);
     	$collection = new Collection(json_decode($response->getBody()));
 
         if ($collection->count() == 1) {
             return $collection->collapse();
         }
+
+        $this->logResponse($collection);
 
         return $collection;
 

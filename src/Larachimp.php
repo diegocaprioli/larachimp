@@ -33,10 +33,21 @@ class Larachimp {
     /**
      * Creates a new Larachimp instance
      * 
-     * @param string $apikey
-     * @param array $clientOptions
+     * @param Log The logger instance to use
      */
-    public function __construct($apikey = '', $baseuri = '', $clientOptions = [], Log $log = null)
+    public function __construct(Log $log = null)
+    {
+        $this->log = $log;
+    }
+
+    /**
+     * Initializes the instance with the proper configuration values
+     * 
+     * @param  string $apikey The API key to the Mailchimp API
+     * @param  string $baseuri The base URI to use for the requests
+     * @param  array $clientOptions Te options array in the Guzzle Client expected format     
+     */
+    public function initialize($apikey = '', $baseuri = '', $clientOptions = [])
     {
         $this->apikey = $apikey;
         $this->baseuri = $baseuri;
@@ -74,6 +85,10 @@ class Larachimp {
      */
     public function request($method, $resource, array $options = [])
     {
+
+        if (empty($this->apikey)) {
+            throw new \Exception("You must initialize the Larachimp instance by calling the initialize() method before attempting any request.");
+        }
 
     	$options = array_merge($this->options, $options);
 

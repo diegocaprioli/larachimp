@@ -25,7 +25,7 @@ class LarachimpServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->app->bind(Larachimp::class, function ($app) {
+        $this->app->singleton('diegocaprioli_larachimp', function ($app) {
             $config = $app['config']['larachimp'];
             $larachimp = new Larachimp();
             $larachimp->initialize($config['apikey'], $config['baseuri']);

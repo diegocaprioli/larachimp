@@ -12,6 +12,6 @@ class LarachimpFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return Larachimp::class;
+        return 'diegocaprioli_larachimp';
     }
 }

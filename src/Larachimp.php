@@ -108,12 +108,20 @@ class Larachimp {
 
         $this->logRequest($method, $resource , $options);
 
-    	$response = $this->client->request($method, $resource, $options);
-    	$collection = new Collection(json_decode($response->getBody()));
+        try {
+            $response = $this->client->request($method, $resource, $options);
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
 
-        if ($collection->count() == 1) {
-            return $collection->collapse();
-        }
+            $this->log->error(
+                "A \GuzzleHttp\Exception\ClientException has been thrown. Request: " .
+                var_export($e->getRequest(), true) . 
+                " - Response: " . var_export($e->getResponse(), true)
+            );
+            throw $e;
+            
+        }    	
+
+    	$collection = new Collection(json_decode($response->getBody()));
 
         $this->logResponse($collection);
 

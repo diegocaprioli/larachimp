@@ -25,10 +25,10 @@ class LarachimpServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->app->singleton('diegocaprioli_larachimp', function ($app) {
-            $config = $app['config']['larachimp'];
-            $larachimp = new Larachimp();
-            $larachimp->initialize($config['apikey'], $config['baseuri']);
+        $this->app->singleton('diegocaprioli_larachimp', function ($app) {            
+            $config = $app['config']['diegocaprioli']['larachimp']['larachimp'];
+            $larachimp = new Larachimp($this->app->make('log'));
+            $larachimp->initialize($config['apikey'], $config['baseuri']);            
             return $larachimp;
         });
     }

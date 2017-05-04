@@ -11,23 +11,23 @@ class Larachimp {
      *
      * @var string
      */
-    private $baseuri;
+    protected $baseuri;
 
     /**
      * @var string
      */
-    private $apikey;
+    protected $apikey;
 
     /**
      * @var Client
      */
-    private $client;
+    protected $client;
 
     /**
      * The logeer to user
      * @var Illuminate\Support\Facades\Log
      */
-    private $log;
+    protected $log;
 
 
     /**
@@ -48,7 +48,7 @@ class Larachimp {
      * @param  array $clientOptions Te options array in the Guzzle Client expected format     
      */
     public function initialize($apikey = '', $baseuri = '', $clientOptions = [])
-    {
+    {        
         $this->apikey = $apikey;
         $this->baseuri = $baseuri;
         $this->client = new Client($clientOptions);        
@@ -57,6 +57,13 @@ class Larachimp {
         ];
     }
 
+    /**
+     * If there's a logger defined, it logs the request made
+     * 
+     * @param  string $method
+     * @param  string $resource
+     * @param  array $options
+     */
     protected function logRequest($method, $resource, array $options = [])
     {           
         if (!empty($this->log)) {
@@ -66,6 +73,11 @@ class Larachimp {
         }        
     }
 
+    /**
+     * If there's a logger defined, it logs the response returned
+     * 
+     * @param  Collection $collection
+     */
     protected function logResponse(Collection $collection)
     {
         if (!empty($this->log)) {

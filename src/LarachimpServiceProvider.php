@@ -13,7 +13,7 @@ class LarachimpServiceProvider extends ServiceProvider {
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/larachimp.php' => config_path('larachimp.php')
+            __DIR__ . '/config/larachimp.php' => config_path('diegocaprioli/larachimp/larachimp.php')
         ]);
     }
 

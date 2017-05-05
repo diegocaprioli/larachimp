@@ -6,7 +6,7 @@ use \Illuminate\Support\Collection;
 
 class Larachimp {
 
-	/**
+    /**
      * Base URI for Mailchimp API v3
      *
      * @var string
@@ -57,6 +57,20 @@ class Larachimp {
         ];
     }
 
+
+    /**
+     * If there's a logger defined, it logs the string
+     * 
+     * @param string $string The string to log     
+     */
+    protected function logInfo($string)
+    {
+        if (!empty($this->log)) {
+            $this->log->info($string);
+        }
+    }
+
+
     /**
      * If there's a logger defined, it logs the request made
      * 
@@ -65,25 +79,21 @@ class Larachimp {
      * @param  array $options
      */
     protected function logRequest($method, $resource, array $options = [])
-    {           
-        if (!empty($this->log)) {
-            $this->log->info('Mailchimp API Request = ' . var_export([
-                compact('resource', 'method', 'options')
-            ], true));
-        }        
+    {   
+        $this->logInfo('Mailchimp API Request = ' . var_export([
+            compact('resource', 'method', 'options')
+        ], true));        
     }
+
 
     /**
      * If there's a logger defined, it logs the response returned
      * 
      * @param  Collection $collection
      */
-    protected function logResponse(Collection $collection)
+    protected function logResponse($response)
     {
-        if (!empty($this->log)) {
-            $array = $collection->toArray();
-            $this->log->info('Mailchimp API Response = ' . var_export($array, true));
-        }        
+        $this->logInfo('Mailchimp API Response = ' . var_export($response, true));
     }
 
     /**
@@ -93,7 +103,7 @@ class Larachimp {
      * @param  string $method The request method (GET, POST, PATCH, PUT, DELETE)
      * @param  array $options An array of options as accepted by Guzzle Client
      * 
-     * @return Illuminate\Support\Collection
+     * @return mixed The json_decode'd version of the response body 
      */
     public function request($method, $resource, array $options = [])
     {
@@ -102,7 +112,7 @@ class Larachimp {
             throw new \Exception("You must initialize the Larachimp instance by calling the initialize() method before attempting any request.");
         }
 
-    	$options = array_merge($this->options, $options);
+        $options = array_merge($this->options, $options);
 
         $resource = $this->baseuri . $resource;
 
@@ -115,17 +125,19 @@ class Larachimp {
             $this->log->error(
                 "A \GuzzleHttp\Exception\ClientException has been thrown. Request: " .
                 var_export($e->getRequest(), true) . 
-                " - Response: " . var_export($e->getResponse(), true)
+                " - Response: " . var_export($e->getResponse()->getBody()->getContents(), true)
             );
             throw $e;
             
-        }    	
+        }
+        
+        $responseContents = $response->getBody()->getContents(); 
+        $this->logResponse($responseContents);
+        $decodedResponse = json_decode($responseContents);
+        $this->logInfo('JSON decode error ? ' . json_last_error_msg());
+        $this->logInfo('JSON Decoded Response = ' . var_export($decodedResponse, true));
 
-    	$collection = new Collection(json_decode($response->getBody()));
-
-        $this->logResponse($collection);
-
-        return $collection;
+        return $decodedResponse;
 
     }
 

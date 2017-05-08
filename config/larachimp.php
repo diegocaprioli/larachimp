@@ -32,4 +32,15 @@ return [
     */
     'baseuri' => 'https://us15.api.mailchimp.com/3.0/',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Mailchimp Subscriber List ID
+    |--------------------------------------------------------------------------
+    |    
+    | It contains the List ID of the list that will be used to sync the emails
+    | from users
+    |
+    */
+   'list_id' => '123',
+
 ];

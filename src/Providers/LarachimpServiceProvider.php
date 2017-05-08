@@ -1,6 +1,6 @@
-<?php namespace DiegoCaprioli\Larachimp;
+<?php namespace DiegoCaprioli\Larachimp\Providers;
 
-use DiegoCaprioli\Larachimp\Larachimp;
+use DiegoCaprioli\Larachimp\Services\Larachimp;
 use Illuminate\Support\ServiceProvider;
 
 class LarachimpServiceProvider extends ServiceProvider {
@@ -13,7 +13,7 @@ class LarachimpServiceProvider extends ServiceProvider {
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/larachimp.php' => config_path('diegocaprioli/larachimp/larachimp.php')
+            __DIR__ . '../../config/larachimp.php' => config_path('diegocaprioli/larachimp/larachimp.php')
         ]);
     }
 

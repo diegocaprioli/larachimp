@@ -1,6 +1,5 @@
-<?php namespace DiegoCaprioli\Larachimp;
+<?php namespace DiegoCaprioli\Larachimp\Facades;
 
-use DiegoCaprioli\Larachimp\Larachimp;
 use Illuminate\Support\Facades\Facade;
 
 class LarachimpFacade extends Facade

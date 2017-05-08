@@ -1,9 +1,12 @@
-<?php namespace DiegoCaprioli\Larachimp;
+<?php namespace DiegoCaprioli\Larachimp\Services;
 
 use \GuzzleHttp\Client;
 use \Illuminate\Contracts\Logging\Log;
 use \Illuminate\Support\Collection;
 
+/**
+ * Handles the basic interaction with Mailchimp v3 API
+ */
 class Larachimp {
 
     /**

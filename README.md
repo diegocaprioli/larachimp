@@ -44,6 +44,7 @@ If you prefer [facades](http://laravel.com/docs/5.1/facades), make sure you add 
     ...
     'Larachimp' => DiegoCaprioli\Larachimp\LarachimpFacade::class
 ]
+```
 
 #### Configuration
 Publish the config by running:

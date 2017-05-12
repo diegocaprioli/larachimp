@@ -12,8 +12,8 @@
     "require": {
         "php": ">=5.5",
         "guzzlehttp/guzzle": "~6.0",
-        "laravel/framework": "~5.1",
-        "vlucas/phpdotenv": "~2.4",
+        "laravel/framework": "5.1.*",
+        "vlucas/phpdotenv": "~1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "5.5.*",
@@ -21,7 +21,8 @@
     },
     "autoload": {        
         "psr-4": {
-            "DiegoCaprioli\\Larachimp\\": "src/"
+            "DiegoCaprioli\\Larachimp\\": "src/",
+            "DiegoCaprioli\\Larachimp\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev"

@@ -1,13 +1,13 @@
-<?php
+<?php namespace DiegoCaprioli\Larachimp\Tests\Integration;
 
 use DiegoCaprioli\Larachimp\Facades\LarachimpFacade;
 use DiegoCaprioli\Larachimp\Providers\LarachimpServiceProvider;
 use DiegoCaprioli\Larachimp\Services\Larachimp;
-use Dotenv\Dotenv;
+
 use Orchestra\Testbench\TestCase;
 
 
-class LarachimpTest extends TestCase {
+abstract class BaseTestCase extends TestCase {
 
 	public function setUp()
 	{		
@@ -26,16 +26,12 @@ class LarachimpTest extends TestCase {
 	protected function getEnvironmentSetUp($app)
 	{
 		//dd("getEnvironmentSetUp");
-		$dotenv = new Dotenv(__DIR__ . '/..');
-		$dotenv->load();
+		$dotenv = new \Dotenv();
+		$dotenv->load(__DIR__ . '/..');
 
 	    $config = include(__DIR__ . '/../../config/larachimp.php');
 	    $app['config']->set('diegocaprioli.larachimp.larachimp', $config);
 	}
 
-	public function test_it_connects_to_api_properly()
-	{		
-		$response = LarachimpFacade::request('GET', '');
-	}
 
 }

@@ -73,7 +73,7 @@ class SyncMailchimpMemberTest extends BaseTestCase {
         $this->assertEquals('subscribed', $memberObject->status);
 	}
 
-	
+
 	public function test_sync_user_with_queued_job() {
 		$member = new Member('test', 'test@siterocket.com', false);
 		$this->dispatch(new SyncMailchimpMember($member));
@@ -103,16 +103,16 @@ class Member implements LarachimpListMember {
 }
 
 class VerySimpleLogger implements Log {
-	public function alert($message, array $context = []) { $this->print($message); }
-	public function critical($message, array $context = []) { $this->print($message); }
-	public function error($message, array $context = []) { $this->print($message); }
-	public function warning($message, array $context = []) { $this->print($message); }
-	public function notice($message, array $context = []) { $this->print($message); }
-	public function info($message, array $context = []) { $this->print($message); }
-	public function debug($message, array $context = []) { $this->print($message); }
-	public function log($level, $message, array $context = []) { $this->print($message); }
+	public function alert($message, array $context = []) { $this->write($message); }
+	public function critical($message, array $context = []) { $this->write($message); }
+	public function error($message, array $context = []) { $this->write($message); }
+	public function warning($message, array $context = []) { $this->write($message); }
+	public function notice($message, array $context = []) { $this->write($message); }
+	public function info($message, array $context = []) { $this->write($message); }
+	public function debug($message, array $context = []) { $this->write($message); }
+	public function log($level, $message, array $context = []) { $this->write($message); }
 	public function useFiles($path, $level = 'debug') {}
 	public function useDailyFiles($path, $days = 0, $level = 'debug') {}
 
-	public function print($message) { var_export($message); }
+	public function write($message) { var_export($message); }
 }

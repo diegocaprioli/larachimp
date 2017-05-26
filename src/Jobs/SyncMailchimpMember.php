@@ -34,7 +34,7 @@ class SyncMailchimpMember implements SelfHandling, ShouldQueue
     {
         // The Job only executes if the apiKey is set! This works sort of an
         // on/off switch
-        if (!empty(config('diegocaprioli.larachimp.larachimp.apiKey'))) {
+        if (!empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
             $manager = App::make(MailchimpManager::class);
             $manager->syncMember($this->member);
         }        

@@ -44,6 +44,16 @@ class Larachimp {
     }
 
     /**
+     * Sets the log attribute
+     * 
+     * @param Log $log
+     */
+    public function setLog(Log $log = null)
+    {
+        $this->log = $log;
+    }
+
+    /**
      * Initializes the instance with the proper configuration values
      * 
      * @param  string $apikey The API key to the Mailchimp API
@@ -130,8 +140,7 @@ class Larachimp {
                 var_export($e->getRequest(), true) . 
                 " - Response: " . var_export($e->getResponse()->getBody()->getContents(), true)
             );
-            throw $e;
-            
+            throw $e;            
         }
         
         $responseContents = $response->getBody()->getContents(); 

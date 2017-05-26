@@ -30,7 +30,7 @@ abstract class BaseTestCase extends TestCase {
 		$dotenv->load(__DIR__ . '/..');
 
 	    $config = include(__DIR__ . '/../../config/larachimp.php');
-	    $app['config']->set('diegocaprioli.larachimp.larachimp', $config);
+	    $app['config']->set('diegocaprioli.larachimp.larachimp', $config);	    
 	}
 
 

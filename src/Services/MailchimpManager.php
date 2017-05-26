@@ -2,7 +2,9 @@
 
 use DiegoCaprioli\Larachimp\Facades\LarachimpFacade;
 use DiegoCaprioli\Larachimp\Models\LarachimpListMember;
+use DiegoCaprioli\Larachimp\Services\Larachimp;
 use Illuminate\Contracts\Logging\Log;
+use Illuminate\Support\Facades\App;
 
 class MailchimpManager
 {
@@ -20,12 +22,21 @@ class MailchimpManager
     private $log;
 
     /**
+     * The LArachimp instance to talk with the API
+     * 
+     * @var DiegoCaprioli\Larachimp\Services\Larachimp
+     */
+    private $larachimp;
+
+    /**
      * Returns a new MailchimpManager instance ready to use.
      */
-    public function __construct(Log $log)
+    public function __construct(Log $log = null)
     {
         $this->log = $log;
         $this->listId = config('diegocaprioli.larachimp.larachimp.list_id');
+        //var_export(config('diegocaprioli.larachimp.larachimp'));
+        LarachimpFacade::setLog($log);
     }
 
     /**
@@ -34,9 +45,9 @@ class MailchimpManager
      */
     protected function verifyList()
     {
-
-        if (empty(config('diegocaprioli.larachimp.larachimp.apiKey'))) {
-            throw new \Exception('The Mailchimp API key is not properly set. Please verify the apiKey configuration.');
+        //var_export(config('diegocaprioli.larachimp.larachimp'));
+        if (empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
+            throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
         }
 
         $response = LarachimpFacade::request('GET', 'lists/'.$this->listId, [
@@ -59,7 +70,7 @@ class MailchimpManager
      *
      * @see http://developer.mailchimp.com/documentation/mailchimp/reference/search-members/
      */
-    protected function searchMember(LarachimpListMember $member)
+    public function searchMember(LarachimpListMember $member)
     {
         $response = LarachimpFacade::request('GET', 'search-members', [
             'query' => [
@@ -87,7 +98,7 @@ class MailchimpManager
      *
      * @return stdClass The Mailchimp member
      */
-    protected function addListMember(LarachimpListMember $member)
+    public function addListMember(LarachimpListMember $member)
     {
         return LarachimpFacade::request('POST', 'lists/'.$this->listId.'/members', [
             'body' => json_encode([
@@ -106,7 +117,7 @@ class MailchimpManager
      *
      * @return stdClass The Mailchimp member
      */
-    protected function updateListMember(LarachimpListMember $member, $subscriberHash)
+    public function updateListMember(LarachimpListMember $member, $subscriberHash)
     {
         return LarachimpFacade::request('PATCH', 'lists/'.$this->listId.'/members/'.$subscriberHash, [
             'body' => json_encode([
@@ -130,7 +141,11 @@ class MailchimpManager
 
         // Search the user by email in the list
         $mailchimpListMember = $this->searchMember($member);
-        $this->log->info('Member Found = '.var_export($mailchimpListMember, true));
+
+        if ($this->log) {
+            $this->log->info('Member Found = '.var_export($mailchimpListMember, true));
+        }
+
         if (empty($mailchimpListMember)) {
             // Add the user to the list
             $mailchimpListMember = $this->addListMember($member);

@@ -22,13 +22,19 @@ class Larachimp {
     protected $apikey;
 
     /**
+     * The connection options
+     * @var array
+     */
+    protected $options;
+
+    /**
      * @var Client
      */
-    protected $client;
+    protected $client;   
 
     /**
      * The logeer to user
-     * @var Illuminate\Support\Facades\Log
+     * @var \Illuminate\Contracts\Logging\Log
      */
     protected $log;
 
@@ -58,7 +64,7 @@ class Larachimp {
      * 
      * @param  string $apikey The API key to the Mailchimp API
      * @param  string $baseuri The base URI to use for the requests
-     * @param  array $clientOptions Te options array in the Guzzle Client expected format     
+     * @param  array $clientOptions The options array in the Guzzle Client expected format     
      */
     public function initialize($apikey = '', $baseuri = '', $clientOptions = [])
     {        
@@ -102,7 +108,7 @@ class Larachimp {
     /**
      * If there's a logger defined, it logs the response returned
      * 
-     * @param  Collection $collection
+     * @param mixed $response
      */
     protected function logResponse($response)
     {

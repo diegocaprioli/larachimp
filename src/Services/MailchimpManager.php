@@ -22,20 +22,14 @@ class MailchimpManager
     private $log;
 
     /**
-     * The LArachimp instance to talk with the API
-     * 
-     * @var DiegoCaprioli\Larachimp\Services\Larachimp
-     */
-    private $larachimp;
-
-    /**
      * Returns a new MailchimpManager instance ready to use.
+     *
+     * @param Illuminate\Contracts\Logging\Log $log
      */
     public function __construct(Log $log = null)
     {
         $this->log = $log;
-        $this->listId = config('diegocaprioli.larachimp.larachimp.list_id');
-        //var_export(config('diegocaprioli.larachimp.larachimp'));
+        $this->listId = config('diegocaprioli.larachimp.larachimp.list_id');        
         LarachimpFacade::setLog($log);
     }
 
@@ -44,8 +38,7 @@ class MailchimpManager
      * Mailchimp account.
      */
     protected function verifyList()
-    {
-        //var_export(config('diegocaprioli.larachimp.larachimp'));
+    {        
         if (empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
             throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
         }

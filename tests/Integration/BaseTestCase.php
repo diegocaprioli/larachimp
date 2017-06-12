@@ -26,8 +26,10 @@ abstract class BaseTestCase extends TestCase {
 	protected function getEnvironmentSetUp($app)
 	{
 		//dd("getEnvironmentSetUp");
-		$dotenv = new \Dotenv();
-		$dotenv->load(__DIR__ . '/..');
+		if (file_exists(__DIR__ . '/../.env')) {
+			$dotenv = new \Dotenv();
+			$dotenv->load(__DIR__ . '/..');
+		}
 
 	    $config = include(__DIR__ . '/../../config/larachimp.php');
 	    $app['config']->set('diegocaprioli.larachimp.larachimp', $config);	    

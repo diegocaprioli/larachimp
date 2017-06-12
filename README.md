@@ -1,4 +1,4 @@
-# Larachimp
+# Larachimp [![Build Status](https://travis-ci.org/diegocaprioli/larachimp.svg?branch=0.3)](https://travis-ci.org/diegocaprioli/larachimp)
 
 A simple Mailchimp API v3 client for the Laravel Framework.
 
@@ -12,7 +12,7 @@ Add the following to your composer.json
 ```json
 {
     "require": {
-        "diegocaprioli/larachimp": "~0.1"
+        "diegocaprioli/larachimp": "~0.3"
     },
     "repositories": [        
 	    {
@@ -42,7 +42,7 @@ If you prefer [facades](http://laravel.com/docs/5.1/facades), make sure you add 
 // config/app.php
 'aliases' => [
     ...
-    'Larachimp' => DiegoCaprioli\Larachimp\LarachimpFacade::class
+    'LarachimpFacade' => DiegoCaprioli\Larachimp\LarachimpFacade::class
 ]
 ```
 
@@ -89,6 +89,17 @@ return [
     */
     'baseuri' => 'https://us1.api.mailchimp.com/3.0/',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Mailchimp Subscriber List ID
+    |--------------------------------------------------------------------------
+    |    
+    | It contains the List ID of the list that will be used to sync the emails
+    | from users
+    |
+    */
+   'list_id' => env('MAILCHIMP_LIST_ID', '123'),
+
 ];
 ```
 
@@ -118,6 +129,6 @@ requiring the package like this:
 }
 ```
 
-Where the `url` must point to the proper directory where you have cloned 
-Larachimp.
+Where the parameter `url` must point to the proper directory where you have 
+cloned Larachimp.
 

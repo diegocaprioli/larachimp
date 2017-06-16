@@ -33,7 +33,7 @@ trait BasicLogging {
     protected function logInfo($string)
     {
         if (
-            !empty($this->log) and 
+            !empty($this->log) &&
             config('diegocaprioli.larachimp.larachimp.log_level', 'error') == 'info'
         ) {
             $this->log->info($string);

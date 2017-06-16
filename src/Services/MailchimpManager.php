@@ -5,7 +5,6 @@ use DiegoCaprioli\Larachimp\Models\LarachimpListMember;
 use DiegoCaprioli\Larachimp\Services\Larachimp;
 use DiegoCaprioli\Larachimp\Traits\BasicLogging;
 use Illuminate\Contracts\Logging\Log;
-use Illuminate\Support\Facades\App;
 
 class MailchimpManager
 {
@@ -44,7 +43,7 @@ class MailchimpManager
             throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
         }
 
-        $response = LarachimpFacade::request('GET', 'lists/'.$this->listId, [
+        $response = LarachimpFacade::request('GET', 'lists/' . $this->listId, [
             'query' => ['fields' => 'id,web_id,name'],
         ]);
         if (empty($response)) {
@@ -94,7 +93,7 @@ class MailchimpManager
      */
     public function addListMember(LarachimpListMember $member)
     {
-        return LarachimpFacade::request('POST', 'lists/'.$this->listId.'/members', [
+        return LarachimpFacade::request('POST', 'lists/' . $this->listId . '/members', [
             'body' => json_encode([
                 'email_address' => $member->getEmail(),
                 'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
@@ -113,7 +112,7 @@ class MailchimpManager
      */
     public function updateListMember(LarachimpListMember $member, $subscriberHash)
     {
-        return LarachimpFacade::request('PATCH', 'lists/'.$this->listId.'/members/'.$subscriberHash, [
+        return LarachimpFacade::request('PATCH', 'lists/' . $this->listId . '/members/' . $subscriberHash, [
             'body' => json_encode([
             	'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
         	]),
@@ -136,7 +135,7 @@ class MailchimpManager
         // Search the user by email in the list
         $mailchimpListMember = $this->searchMember($member);
 
-        $this->logInfo('Member Found = '.var_export($mailchimpListMember, true));
+        $this->logInfo('Member Found = ' . var_export($mailchimpListMember, true));
 
         if (empty($mailchimpListMember)) {
             // Add the user to the list

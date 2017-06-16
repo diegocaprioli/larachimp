@@ -41,18 +41,18 @@ return [
     | from users
     |
     */
-   'list_id' => env('MAILCHIMP_LIST_ID', '123'),
+    'list_id' => env('MAILCHIMP_LIST_ID', '123'),
 
-   /*
-   |--------------------------------------------------------------------------
-   | Log error level
-   |--------------------------------------------------------------------------
-   |    
-   | Specifies which level of errors should be logged by the package.
-   | info: logs everything (API requests, responses and any errors)
-   | error: only logs errors
-   |
-   */
-   'log_level' => env('LARACHIMP_LOG_LEVEL', 'error'), // info, error
+    /*
+    |--------------------------------------------------------------------------
+    | Log error level
+    |--------------------------------------------------------------------------
+    |    
+    | Specifies which level of errors should be logged by the package.
+    | info: logs everything (API requests, responses and any errors)
+    | error: only logs errors
+    |
+    */
+    'log_level' => env('LARACHIMP_LOG_LEVEL', 'error'), // info, error
 
 ];

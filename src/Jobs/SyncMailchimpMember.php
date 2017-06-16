@@ -15,14 +15,14 @@ class SyncMailchimpMember implements SelfHandling, ShouldQueue
     /**
      * An instance object that can be synced as a Mailchimp List member.
      *
-     * @var DiegoCaprioli\Larachimp\Models\LarachimpListMember
+     * @var \DiegoCaprioli\Larachimp\Models\LarachimpListMember
      */
     private $member;
 
     /**
      * Create a new job instance.
      * 
-     * @param DiegoCaprioli\Larachimp\Models\LarachimpListMember $member
+     * @param \DiegoCaprioli\Larachimp\Models\LarachimpListMember $member
      */
     public function __construct(LarachimpListMember $member)
     {

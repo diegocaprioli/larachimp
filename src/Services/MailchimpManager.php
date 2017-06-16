@@ -17,14 +17,14 @@ class MailchimpManager
 
     /**
      * Logger instance
-     * @var Illuminate\Contracts\Logging\Log
+     * @var \Illuminate\Contracts\Logging\Log
      */
     private $log;
 
     /**
      * Returns a new MailchimpManager instance ready to use.
      *
-     * @param Illuminate\Contracts\Logging\Log $log
+     * @param \Illuminate\Contracts\Logging\Log $log
      */
     public function __construct(Log $log = null)
     {

@@ -161,9 +161,7 @@ class Larachimp {
         $responseContents = $response->getBody()->getContents(); 
         $this->logResponse($responseContents);
         $decodedResponse = json_decode($responseContents);
-        /*$this->logInfo('JSON decode error ? ' . json_last_error_msg());
-        $this->logInfo('JSON Decoded Response = ' . var_export($decodedResponse, true));*/
-
+        
         return $decodedResponse;
 
     }

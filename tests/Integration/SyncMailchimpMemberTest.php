@@ -52,8 +52,9 @@ class SyncMailchimpMemberTest extends BaseTestCase {
 	
 	public function test_syncs_a_user()
 	{
-		$member = new Member('test', 'test@siterocket.com', false);
-		$manager = new MailchimpManager(null);
+		$faker = \Faker\Factory::create();
+		$member = new Member($faker->name, 'test-' . $faker->username . '@siterocket.com', false);
+		$manager = new MailchimpManager(new VerySimpleLogger());
         $manager->syncMember($member);
 
         $memberObject = $manager->searchMember($member);

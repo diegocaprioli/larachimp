@@ -28,7 +28,7 @@ class Larachimp {
     protected $options;
 
     /**
-     * @var Client
+     * @var \GuzzleHttp\Client
      */
     protected $client;   
 
@@ -63,8 +63,9 @@ class Larachimp {
      * Initializes the instance with the proper configuration values
      * 
      * @param  string $apikey The API key to the Mailchimp API
-     * @param  string $baseuri The base URI to use for the requests
-     * @param  array $clientOptions The options array in the Guzzle Client expected format     
+     * @param  string $baseuri The base URI to use for the requests. Make sure it has a trailing/ending "/"
+     * @param  array $clientOptions The options array in the Guzzle Client expected format          *
+     * @see http://guzzle3.readthedocs.io/docs.html Guzzle Docs
      */
     public function initialize($apikey = '', $baseuri = '', $clientOptions = [])
     {        
@@ -116,13 +117,21 @@ class Larachimp {
     }
 
     /**
-     * Makes an API request
+     * Makes a simple API request to Mailchimp. 
+     * It uses the base URI used when initializing this service class, and 
+     * concatenates the $resource to form the URL of the request.
+     * The optional $options array are the standar Guzzle Client request options.
+     * The request will automatically include an option setting the 'headers' to
+     * use the Authorization API KEY as configured.
+     * Finally calls the request method of the Guzzle client using $method, the 
+     * generated URL of the request, and the $options.
      * 
      * @param  string $resource The resource
      * @param  string $method The request method (GET, POST, PATCH, PUT, DELETE)
-     * @param  array $options An array of options as accepted by Guzzle Client
-     * 
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
      * @return mixed The json_decode'd version of the response body 
+     * @see http://developer.mailchimp.com/documentation/mailchimp/guides/get-started-with-mailchimp-api-3/ Mailchimp API v3 Reference
+     * @see http://guzzle3.readthedocs.io/docs.html Guzzle Docs
      */
     public function request($method, $resource, array $options = [])
     {
@@ -152,8 +161,8 @@ class Larachimp {
         $responseContents = $response->getBody()->getContents(); 
         $this->logResponse($responseContents);
         $decodedResponse = json_decode($responseContents);
-        $this->logInfo('JSON decode error ? ' . json_last_error_msg());
-        $this->logInfo('JSON Decoded Response = ' . var_export($decodedResponse, true));
+        /*$this->logInfo('JSON decode error ? ' . json_last_error_msg());
+        $this->logInfo('JSON Decoded Response = ' . var_export($decodedResponse, true));*/
 
         return $decodedResponse;
 

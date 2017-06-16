@@ -102,7 +102,7 @@ return [
 If you plan on updating this code you might want to inlcude it on on your
 project and use it directly from your local repository while developing. This 
 way any additions or changes you are making to the package will be directly 
-available wihtout the need to push a new package version and updating your 
+available without the need to push a new package version and updating your 
 composer dependencies in the client project.
 
 You can achieve that by cloning this project into your own local drive and 

@@ -1,0 +1,9 @@
+<filter>
+  <whitelist processUncoveredFilesFromWhitelist="true">
+    <directory suffix=".php">/</directory>    
+    <exclude>
+      <directory suffix=".php">/test</directory>      
+      <directory suffix=".php">/vendor</directory>
+    </exclude>
+  </whitelist>
+</filter>

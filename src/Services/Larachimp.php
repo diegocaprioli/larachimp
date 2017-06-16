@@ -1,5 +1,6 @@
 <?php namespace DiegoCaprioli\Larachimp\Services;
 
+use DiegoCaprioli\Larachimp\Traits\BasicLogging;
 use \GuzzleHttp\Client;
 use \Illuminate\Contracts\Logging\Log;
 use \Illuminate\Support\Collection;
@@ -33,11 +34,9 @@ class Larachimp {
     protected $client;   
 
     /**
-     * The logeer to user
-     * @var \Illuminate\Contracts\Logging\Log
+     * Make this class use a logger and it's basic methods
      */
-    protected $log;
-
+    use BasicLogging;
 
     /**
      * Creates a new Larachimp instance
@@ -45,16 +44,6 @@ class Larachimp {
      * @param Log The logger instance to use
      */
     public function __construct(Log $log = null)
-    {
-        $this->log = $log;
-    }
-
-    /**
-     * Sets the log attribute
-     * 
-     * @param Log $log
-     */
-    public function setLog(Log $log = null)
     {
         $this->log = $log;
     }
@@ -76,20 +65,6 @@ class Larachimp {
             'Authorization' => 'apikey ' . $this->apikey
         ];
     }
-
-
-    /**
-     * If there's a logger defined, it logs the string
-     * 
-     * @param string $string The string to log     
-     */
-    protected function logInfo($string)
-    {
-        if (!empty($this->log)) {
-            $this->log->info($string);
-        }
-    }
-
 
     /**
      * If there's a logger defined, it logs the request made
@@ -150,7 +125,7 @@ class Larachimp {
             $response = $this->client->request($method, $resource, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
 
-            $this->logInfo(
+            $this->logError(
                 "A \GuzzleHttp\Exception\ClientException has been thrown. Request: " .
                 var_export($e->getRequest(), true) . 
                 " - Response: " . var_export($e->getResponse()->getBody()->getContents(), true)

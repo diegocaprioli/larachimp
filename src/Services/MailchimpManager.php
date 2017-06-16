@@ -3,6 +3,7 @@
 use DiegoCaprioli\Larachimp\Facades\LarachimpFacade;
 use DiegoCaprioli\Larachimp\Models\LarachimpListMember;
 use DiegoCaprioli\Larachimp\Services\Larachimp;
+use DiegoCaprioli\Larachimp\Traits\BasicLogging;
 use Illuminate\Contracts\Logging\Log;
 use Illuminate\Support\Facades\App;
 
@@ -16,10 +17,10 @@ class MailchimpManager
     private $listId;
 
     /**
-     * Logger instance
-     * @var \Illuminate\Contracts\Logging\Log
+     * Make this class use a logger and it's basic methods
      */
-    private $log;
+    use BasicLogging;   
+
 
     /**
      * Returns a new MailchimpManager instance ready to use.
@@ -135,9 +136,7 @@ class MailchimpManager
         // Search the user by email in the list
         $mailchimpListMember = $this->searchMember($member);
 
-        if ($this->log) {
-            $this->log->info('Member Found = '.var_export($mailchimpListMember, true));
-        }
+        $this->logInfo('Member Found = '.var_export($mailchimpListMember, true));
 
         if (empty($mailchimpListMember)) {
             // Add the user to the list

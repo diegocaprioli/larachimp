@@ -114,7 +114,7 @@ class MailchimpManager
     {
         return LarachimpFacade::request('PATCH', 'lists/' . $this->listId . '/members/' . $subscriberHash, [
             'body' => json_encode([
-            	'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
+                'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
         	]),
         ]);
     }

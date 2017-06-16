@@ -119,7 +119,7 @@ class Larachimp {
 
         $resource = $this->baseuri . $resource;
 
-        $this->logRequest($method, $resource , $options);
+        $this->logRequest($method, $resource, $options);
 
         try {
             $response = $this->client->request($method, $resource, $options);

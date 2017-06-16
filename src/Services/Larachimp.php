@@ -141,7 +141,7 @@ class Larachimp {
             $response = $this->client->request($method, $resource, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
 
-            $this->log->error(
+            $this->logInfo(
                 "A \GuzzleHttp\Exception\ClientException has been thrown. Request: " .
                 var_export($e->getRequest(), true) . 
                 " - Response: " . var_export($e->getResponse()->getBody()->getContents(), true)

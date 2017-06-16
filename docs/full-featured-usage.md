@@ -29,5 +29,5 @@ If for some reason you don't need or don't want to use a queued job, you can syn
 
 ```php
 $manager = App::make(MailchimpManager::class);
-$manager->syncMember($this->member);
+$manager->syncMember($user);
 ```

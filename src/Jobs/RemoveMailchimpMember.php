@@ -9,7 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 /**
- * Updates the user's email in the Mailchimp list
+ * Removes a member from the Mailchip list
  */
 class RemoveMailchimpMember implements SelfHandling, ShouldQueue
 {
@@ -25,7 +25,7 @@ class RemoveMailchimpMember implements SelfHandling, ShouldQueue
     /**
      * Create a new job instance.
      * 
-     * @param \DiegoCaprioli\Larachimp\Models\LarachimpListMember $member
+     * @param string $email
      */
     public function __construct($email)
     {        

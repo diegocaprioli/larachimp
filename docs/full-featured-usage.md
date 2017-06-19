@@ -12,10 +12,10 @@ The package provides a simple way of of syncronizing a User to a Mailchimp list 
 
 1) Configure the Mailchimp list where you want the User details to be synced to (email). You can do this by completing the `list_id` in the `larachimp.php` config file.
 
-2) In your Laravel app you will have a User class (or any other class representing a user for your applciation). You should make this class implement the interface [`LarachimpListMember`](https://github.com/diegocaprioli/larachimp/blob/0.3/src/Models/LarachimpListMember.php). 
+2) In your Laravel app you will have a User class (or any other class representing a user for your applciation). You should make this class implement the interface [`LarachimpListMember`](../src/Models/LarachimpListMember.php). 
 This interface will allow the Larachimp package to know and be able to get the details needed to sync your user to the Mailchimp list (basically it's name, email and wether the user wants to receive or not the newsletter).
 
-3) In your Laravel app, whenever you need to syncronize the User to the Mailchimp list, you should dispatch a new [`SyncMailchimpMember`](https://github.com/diegocaprioli/larachimp/blob/0.3/src/Jobs/SyncMailchimpMember.php) job to your queue, passing the User instance that needs to be synced up:
+3) In your Laravel app, whenever you need to syncronize the User to the Mailchimp list, you should dispatch a new [`SyncMailchimpMember`](../src/Jobs/SyncMailchimpMember.php) job to your queue, passing the User instance that needs to be synced up:
 
 ```php
 $this->dispatch(new SyncMailchimpMember($user));
@@ -25,7 +25,7 @@ And that's it! The job will communicate with your Mailchimp account, and sync yo
 
 ### Syncronizing directly, without a queued job
 
-If for some reason you don't need or don't want to use a queued job, you can syncronize your user directly by interacting with the [`MailchimpManager`](https://github.com/diegocaprioli/larachimp/blob/0.3/src/Services/MailchimpManager.php):
+If for some reason you don't need or don't want to use a queued job, you can syncronize your user directly by interacting with the [`MailchimpManager`](../0.3/src/Services/MailchimpManager.php):
 
 ```php
 $manager = App::make(MailchimpManager::class);
@@ -46,7 +46,7 @@ The Mailchimp member address will be changed. Keep in mind that the user should 
 
 ### Changing the email directly, without a queued job
 
-In the same way as with syncronizing, you will be able to directly change the email address in your Mailchimp list by interacting with the [`MailchimpManager`](https://github.com/diegocaprioli/larachimp/blob/0.3/src/Services/MailchimpManager.php):
+In the same way as with syncronizing, you will be able to directly change the email address in your Mailchimp list by interacting with the [`MailchimpManager`](../src/Services/MailchimpManager.php):
 
 ```php
 $manager = App::make(MailchimpManager::class);

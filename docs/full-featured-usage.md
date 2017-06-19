@@ -31,3 +31,43 @@ If for some reason you don't need or don't want to use a queued job, you can syn
 $manager = App::make(MailchimpManager::class);
 $manager->syncMember($user);
 ```
+
+## Changing an existing user's email address
+
+It is possible that a user in your applications changes it's email address. This is a special case that has to be dealt with appropiatelly. If you would call the syncronization process for this user again, the package would create a new member in the Mailchimp list for the email address (as the current changed email doesn't exist on the list yet). But the old email address will remain there.
+
+Larachimp allows you to deal with this situation appropiatelly. You can dispatch a new `UpdateMailchimpMemberEmail` job for this:
+
+```php
+$this->dispatch(new UpdateMailchimpMemberEmail($user, $oldEmail));
+```
+
+The Mailchimp member address will be changed. Keep in mind that the user should already be returning the new and changed email address when performing this call (from the getEmail() method when implementing the `LarachimpListMember` interface).
+
+### Changing the email directly, without a queued job
+
+In the same way as with syncronizing, you will be able to directly change the email address in your Mailchimp list by interacting with the [`MailchimpManager`](https://github.com/diegocaprioli/larachimp/blob/0.3/src/Services/MailchimpManager.php):
+
+```php
+$manager = App::make(MailchimpManager::class);
+$manager->updateMembersEmail($user, $oldEmail);
+```
+
+## Removing a Mailchimp subscriber from the list
+
+This package does not remove the email from the list when a user decides to not receive the newsletter anymore, but instead sets the status of the email to "Unsubscribed".
+
+But in case that what the app needs it's to finally remove the email completelly from the Mailchimp list, it's also possible. Just dispatch a new `RemoveMailchimpMember` job:
+
+```php
+$this->dispatch(new RemoveMailchimpMember($email));
+```
+
+### Removing without a queued job
+
+Following the same pattern as previous features, you will also be able to execute this functionality directly:
+
+```php
+$manager = App::make(MailchimpManager::class);
+$manager->removeListMember($email);
+```

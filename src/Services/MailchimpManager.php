@@ -57,31 +57,34 @@ class MailchimpManager
      * The returned stdClass has the fields as Mailchimp return for it's members
      * under the exact_matches.members entry.
      *
-     * @param LarachimpListMember $member The object instance to search in Mailchimp
+     * @param string $email The email of the Mailchim member to search for
      *
      * @return stdClass|null
      *
      * @see http://developer.mailchimp.com/documentation/mailchimp/reference/search-members/
      */
-    public function searchMember(LarachimpListMember $member)
+    public function searchMember($email)
     {
         $response = LarachimpFacade::request('GET', 'search-members', [
             'query' => [
-                'query' => $member->getEmail(),
+                'query' => $email,
                 'list_id' => $this->listId,
             ],
         ]);
 
-        if (empty($response)) {
-            return;
-        } elseif (isset($response->exact_matches)) {
-            // Get the result. It should be an exact match
-            if ($response->exact_matches->total_items == 1) {
-                return $response->exact_matches->members[0];
+        $member = null;
+        if (!empty($response)) {
+            if (isset($response->exact_matches)) {
+                // Get the result. It should be an exact match
+                if ($response->exact_matches->total_items == 1) {
+                    $member = $response->exact_matches->members[0];
+                }
             }
-        } else {
-            return;
-        }
+        }        
+
+        $this->logInfo('Member Found = ' . var_export($member, true));
+
+        return $member;
     }
 
     /**
@@ -119,12 +122,29 @@ class MailchimpManager
         ]);
     }
 
+
+    /**
+     * Removes the member from the mailchimp list, by email
+     * 
+     * @param  string $email The email to remove from the list
+     */
+    public function removeListMember($email)
+    {
+        // Get the member first from Mailchimp
+        $member = $this->searchMember($email);
+        if (empty($member)) {
+            throw new \Exception('There\'s no Mailchimp member in the list with the email \'' . $email . '\'.');
+        }
+
+        LarachimpFacade::request('DELETE', 'lists/' . $this->listId . '/members/' . $member->id);
+    }
+
+
     /**
      * Syncs the member to the Mailchimp List Member's data. Subscribes or
      * unsubscribes and adds new members if they don't exists yet.
      *
      * @param LarachimpListMember $member The object instance that corresponds to the Mailchimp member and should be synced
-     *
      * @return stdClass The Mailchimp member
      */
     public function syncMember(LarachimpListMember $member)
@@ -133,9 +153,7 @@ class MailchimpManager
         $this->verifyList();
 
         // Search the user by email in the list
-        $mailchimpListMember = $this->searchMember($member);
-
-        $this->logInfo('Member Found = ' . var_export($mailchimpListMember, true));
+        $mailchimpListMember = $this->searchMember($member->getEmail());
 
         if (empty($mailchimpListMember)) {
             // Add the user to the list
@@ -151,4 +169,33 @@ class MailchimpManager
 
         return $mailchimpListMember;
     }
+
+
+    /**
+     * [updateMembersEmail description]
+     * @param  LarachimpListMember  $member     The LarachimpListMember with the new email address
+     * @param  string               $oldEmail   The old email address that the $member was registered with
+     * @return stdClass                         The Mailchimp member
+     */
+    public function updateMembersEmail(LarachimpListMember $member, $oldEmail)
+    {
+
+        // Verify the list exists
+        $this->verifyList();
+
+        // Search the user using the oldEmail email in the list
+        $oldListMember = $this->searchMember($oldEmail);
+        if (empty($oldListMember)) {
+            throw new \Exception('There\'s no Mailchimp member in the list with the email \'' . $oldEmail . '\'.');
+        }
+
+        // Add a new member with the new email:
+        $newListMember = $this->syncMember($member);
+
+        // Remove the old member
+        $this->removeListMember($oldEmail);
+
+        return $newListMember;
+    }
+
 }

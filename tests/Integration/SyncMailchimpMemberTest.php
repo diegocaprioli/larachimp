@@ -1,7 +1,9 @@
 <?php namespace DiegoCaprioli\Larachimp\Tests\Integration;
 
 use DiegoCaprioli\Larachimp\Facades\LarachimpFacade;
+use DiegoCaprioli\Larachimp\Jobs\RemoveMailchimpMember;
 use DiegoCaprioli\Larachimp\Jobs\SyncMailchimpMember;
+use DiegoCaprioli\Larachimp\Jobs\UpdateMailchimpMemberEmail;
 use DiegoCaprioli\Larachimp\Models\LarachimpListMember;
 use DiegoCaprioli\Larachimp\Services\MailchimpManager;
 use Illuminate\Contracts\Logging\Log;
@@ -49,14 +51,41 @@ class SyncMailchimpMemberTest extends BaseTestCase {
 		$app['config']->set('app.cipher', 'AES-256-CBC');
 
 	}
-	
-	public function test_syncs_a_user()
+
+	protected function instanciateNewMember($subscribed = false)
 	{
-		$member = new Member('test', 'test@siterocket.com', false);
-		$manager = new MailchimpManager(null);
+		$faker = \Faker\Factory::create();
+		return new Member($faker->name, 'test-' . $faker->username . '@siterocket.com', $subscribed);
+	}
+	
+
+	public function test_deletes_a_member()
+	{
+		$member = $this->instanciateNewMember();
+		$manager = new MailchimpManager(new VerySimpleLogger());
         $manager->syncMember($member);
 
-        $memberObject = $manager->searchMember($member);
+        $memberObject = $manager->searchMember($member->getEmail());
+        $this->assertNotEmpty($memberObject);
+        $this->assertTrue(isset($memberObject->email_address));
+        $this->assertEquals($member->email, $memberObject->email_address);
+
+        // Remove
+        $manager->removeListMember($memberObject->email_address);
+
+        // Search again
+        $memberObject = $manager->searchMember($member->getEmail());
+        $this->assertEmpty($memberObject, 'The member was not deleted!');        
+	}
+
+
+	public function test_syncs_a_user()
+	{		
+		$member = $this->instanciateNewMember();
+		$manager = new MailchimpManager(new VerySimpleLogger());
+        $manager->syncMember($member);
+
+        $memberObject = $manager->searchMember($member->getEmail());
         $this->assertNotEmpty($memberObject);
         $this->assertTrue(isset($memberObject->email_address));
         $this->assertEquals($member->email, $memberObject->email_address);
@@ -66,17 +95,70 @@ class SyncMailchimpMemberTest extends BaseTestCase {
         $member->receiveNews = true;
         $manager->syncMember($member);
 
-        $memberObject = $manager->searchMember($member);
+        $memberObject = $manager->searchMember($member->getEmail());
         $this->assertNotEmpty($memberObject);
         $this->assertTrue(isset($memberObject->email_address));
         $this->assertEquals($member->email, $memberObject->email_address);
         $this->assertEquals('subscribed', $memberObject->status);
+
+        // Remove member so clean up a bit...
+        $manager->removeListMember($memberObject->email_address);
 	}
 
+	public function test_updates_a_members_email()
+	{
+		// Sync a user		
+		$member = $this->instanciateNewMember(true);
+		$manager = new MailchimpManager(new VerySimpleLogger());		
+        $manager->syncMember($member);
+		
+		// Change the email
+		$oldEmail = $member->email;
+		$faker = \Faker\Factory::create();
+		$member->email = 'test-changed' . $faker->username . '@siterocket.com';
 
-	public function test_sync_user_with_queued_job() {
-		$member = new Member('test', 'test@siterocket.com', false);
+		// Request a change of email
+		$memberReturned = $manager->updateMembersEmail($member, $oldEmail);
+		$this->assertNotEmpty($memberReturned);
+		$this->assertTrue(isset($memberReturned->email_address));
+		$this->assertEquals($member->email, $memberReturned->email_address);
+				
+		// Search for the new email, assert it's there
+		$memberObject = $manager->searchMember($member->getEmail());
+		$this->assertNotEmpty($memberObject);
+        $this->assertTrue(isset($memberObject->email_address));
+        $this->assertEquals($member->email, $memberObject->email_address);
+
+        // Search for the old email, assert it's NOT there
+		$oldMemberObject = $manager->searchMember($oldEmail);
+		$this->assertEmpty($oldMemberObject, 'A member was found when it shouldn\'t: ' . var_export($memberObject, true));
+
+		// Remove member so we clean up a bit...
+		$manager->removeListMember($memberObject->email_address);
+		
+	}
+
+	public function test_sync_and_remove_user_with_queued_job() {
+		$member = $this->instanciateNewMember();
 		$this->dispatch(new SyncMailchimpMember($member));
+		
+		// remove the member to clean up...
+		$this->dispatch(new RemoveMailchimpMember($member->email));
+	}
+
+	public function test_updates_member_email_with_queued_job()
+	{
+		$member = $this->instanciateNewMember();
+		$this->dispatch(new SyncMailchimpMember($member));
+		
+		// update email
+		$oldEmail = $member->email;
+		$faker = \Faker\Factory::create();
+		$member->email = 'test-changed' . $faker->username . '@siterocket.com';
+		$this->dispatch(new UpdateMailchimpMemberEmail($member, $oldEmail));
+		
+		// remove the member to clean up...
+		$this->dispatch(new RemoveMailchimpMember($member->email));
 	}
 
 

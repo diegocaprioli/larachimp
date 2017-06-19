@@ -3,8 +3,8 @@
 use DiegoCaprioli\Larachimp\Facades\LarachimpFacade;
 use DiegoCaprioli\Larachimp\Models\LarachimpListMember;
 use DiegoCaprioli\Larachimp\Services\Larachimp;
+use DiegoCaprioli\Larachimp\Traits\BasicLogging;
 use Illuminate\Contracts\Logging\Log;
-use Illuminate\Support\Facades\App;
 
 class MailchimpManager
 {
@@ -16,26 +16,20 @@ class MailchimpManager
     private $listId;
 
     /**
-     * Logger instance
-     * @var Illuminate\Contracts\Logging\Log
+     * Make this class use a logger and it's basic methods
      */
-    private $log;
+    use BasicLogging;   
 
-    /**
-     * The LArachimp instance to talk with the API
-     * 
-     * @var DiegoCaprioli\Larachimp\Services\Larachimp
-     */
-    private $larachimp;
 
     /**
      * Returns a new MailchimpManager instance ready to use.
+     *
+     * @param \Illuminate\Contracts\Logging\Log $log
      */
     public function __construct(Log $log = null)
     {
         $this->log = $log;
-        $this->listId = config('diegocaprioli.larachimp.larachimp.list_id');
-        //var_export(config('diegocaprioli.larachimp.larachimp'));
+        $this->listId = config('diegocaprioli.larachimp.larachimp.list_id');        
         LarachimpFacade::setLog($log);
     }
 
@@ -44,13 +38,12 @@ class MailchimpManager
      * Mailchimp account.
      */
     protected function verifyList()
-    {
-        //var_export(config('diegocaprioli.larachimp.larachimp'));
+    {        
         if (empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
             throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
         }
 
-        $response = LarachimpFacade::request('GET', 'lists/'.$this->listId, [
+        $response = LarachimpFacade::request('GET', 'lists/' . $this->listId, [
             'query' => ['fields' => 'id,web_id,name'],
         ]);
         if (empty($response)) {
@@ -64,31 +57,34 @@ class MailchimpManager
      * The returned stdClass has the fields as Mailchimp return for it's members
      * under the exact_matches.members entry.
      *
-     * @param LarachimpListMember $member The object instance to search in Mailchimp
+     * @param string $email The email of the Mailchim member to search for
      *
      * @return stdClass|null
      *
      * @see http://developer.mailchimp.com/documentation/mailchimp/reference/search-members/
      */
-    public function searchMember(LarachimpListMember $member)
+    public function searchMember($email)
     {
         $response = LarachimpFacade::request('GET', 'search-members', [
             'query' => [
-                'query' => $member->getEmail(),
+                'query' => $email,
                 'list_id' => $this->listId,
             ],
         ]);
 
-        if (empty($response)) {
-            return;
-        } elseif (isset($response->exact_matches)) {
-            // Get the result. It should be an exact match
-            if ($response->exact_matches->total_items == 1) {
-                return $response->exact_matches->members[0];
+        $member = null;
+        if (!empty($response)) {
+            if (isset($response->exact_matches)) {
+                // Get the result. It should be an exact match
+                if ($response->exact_matches->total_items == 1) {
+                    $member = $response->exact_matches->members[0];
+                }
             }
-        } else {
-            return;
-        }
+        }        
+
+        $this->logInfo('Member Found = ' . var_export($member, true));
+
+        return $member;
     }
 
     /**
@@ -100,7 +96,7 @@ class MailchimpManager
      */
     public function addListMember(LarachimpListMember $member)
     {
-        return LarachimpFacade::request('POST', 'lists/'.$this->listId.'/members', [
+        return LarachimpFacade::request('POST', 'lists/' . $this->listId . '/members', [
             'body' => json_encode([
                 'email_address' => $member->getEmail(),
                 'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
@@ -119,19 +115,36 @@ class MailchimpManager
      */
     public function updateListMember(LarachimpListMember $member, $subscriberHash)
     {
-        return LarachimpFacade::request('PATCH', 'lists/'.$this->listId.'/members/'.$subscriberHash, [
+        return LarachimpFacade::request('PATCH', 'lists/' . $this->listId . '/members/' . $subscriberHash, [
             'body' => json_encode([
-            	'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
+                'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
         	]),
         ]);
     }
+
+
+    /**
+     * Removes the member from the mailchimp list, by email
+     * 
+     * @param  string $email The email to remove from the list
+     */
+    public function removeListMember($email)
+    {
+        // Get the member first from Mailchimp
+        $member = $this->searchMember($email);
+        if (empty($member)) {
+            throw new \Exception('There\'s no Mailchimp member in the list with the email \'' . $email . '\'.');
+        }
+
+        LarachimpFacade::request('DELETE', 'lists/' . $this->listId . '/members/' . $member->id);
+    }
+
 
     /**
      * Syncs the member to the Mailchimp List Member's data. Subscribes or
      * unsubscribes and adds new members if they don't exists yet.
      *
      * @param LarachimpListMember $member The object instance that corresponds to the Mailchimp member and should be synced
-     *
      * @return stdClass The Mailchimp member
      */
     public function syncMember(LarachimpListMember $member)
@@ -140,11 +153,7 @@ class MailchimpManager
         $this->verifyList();
 
         // Search the user by email in the list
-        $mailchimpListMember = $this->searchMember($member);
-
-        if ($this->log) {
-            $this->log->info('Member Found = '.var_export($mailchimpListMember, true));
-        }
+        $mailchimpListMember = $this->searchMember($member->getEmail());
 
         if (empty($mailchimpListMember)) {
             // Add the user to the list
@@ -160,4 +169,33 @@ class MailchimpManager
 
         return $mailchimpListMember;
     }
+
+
+    /**
+     * [updateMembersEmail description]
+     * @param  LarachimpListMember  $member     The LarachimpListMember with the new email address
+     * @param  string               $oldEmail   The old email address that the $member was registered with
+     * @return stdClass                         The Mailchimp member
+     */
+    public function updateMembersEmail(LarachimpListMember $member, $oldEmail)
+    {
+
+        // Verify the list exists
+        $this->verifyList();
+
+        // Search the user using the oldEmail email in the list
+        $oldListMember = $this->searchMember($oldEmail);
+        if (empty($oldListMember)) {
+            throw new \Exception('There\'s no Mailchimp member in the list with the email \'' . $oldEmail . '\'.');
+        }
+
+        // Add a new member with the new email:
+        $newListMember = $this->syncMember($member);
+
+        // Remove the old member
+        $this->removeListMember($oldEmail);
+
+        return $newListMember;
+    }
+
 }

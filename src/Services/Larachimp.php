@@ -1,5 +1,6 @@
 <?php namespace DiegoCaprioli\Larachimp\Services;
 
+use DiegoCaprioli\Larachimp\Traits\BasicLogging;
 use \GuzzleHttp\Client;
 use \Illuminate\Contracts\Logging\Log;
 use \Illuminate\Support\Collection;
@@ -22,16 +23,20 @@ class Larachimp {
     protected $apikey;
 
     /**
-     * @var Client
+     * The connection options
+     * @var array
      */
-    protected $client;
+    protected $options;
 
     /**
-     * The logeer to user
-     * @var Illuminate\Support\Facades\Log
+     * @var \GuzzleHttp\Client
      */
-    protected $log;
+    protected $client;   
 
+    /**
+     * Make this class use a logger and it's basic methods
+     */
+    use BasicLogging;
 
     /**
      * Creates a new Larachimp instance
@@ -44,21 +49,12 @@ class Larachimp {
     }
 
     /**
-     * Sets the log attribute
-     * 
-     * @param Log $log
-     */
-    public function setLog(Log $log = null)
-    {
-        $this->log = $log;
-    }
-
-    /**
      * Initializes the instance with the proper configuration values
      * 
      * @param  string $apikey The API key to the Mailchimp API
-     * @param  string $baseuri The base URI to use for the requests
-     * @param  array $clientOptions Te options array in the Guzzle Client expected format     
+     * @param  string $baseuri The base URI to use for the requests. Make sure it has a trailing/ending "/"
+     * @param  array $clientOptions The options array in the Guzzle Client expected format          *
+     * @see http://guzzle3.readthedocs.io/docs.html Guzzle Docs
      */
     public function initialize($apikey = '', $baseuri = '', $clientOptions = [])
     {        
@@ -69,20 +65,6 @@ class Larachimp {
             'Authorization' => 'apikey ' . $this->apikey
         ];
     }
-
-
-    /**
-     * If there's a logger defined, it logs the string
-     * 
-     * @param string $string The string to log     
-     */
-    protected function logInfo($string)
-    {
-        if (!empty($this->log)) {
-            $this->log->info($string);
-        }
-    }
-
 
     /**
      * If there's a logger defined, it logs the request made
@@ -102,7 +84,7 @@ class Larachimp {
     /**
      * If there's a logger defined, it logs the response returned
      * 
-     * @param  Collection $collection
+     * @param mixed $response
      */
     protected function logResponse($response)
     {
@@ -110,13 +92,21 @@ class Larachimp {
     }
 
     /**
-     * Makes an API request
+     * Makes a simple API request to Mailchimp. 
+     * It uses the base URI used when initializing this service class, and 
+     * concatenates the $resource to form the URL of the request.
+     * The optional $options array are the standar Guzzle Client request options.
+     * The request will automatically include an option setting the 'headers' to
+     * use the Authorization API KEY as configured.
+     * Finally calls the request method of the Guzzle client using $method, the 
+     * generated URL of the request, and the $options.
      * 
      * @param  string $resource The resource
      * @param  string $method The request method (GET, POST, PATCH, PUT, DELETE)
-     * @param  array $options An array of options as accepted by Guzzle Client
-     * 
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
      * @return mixed The json_decode'd version of the response body 
+     * @see http://developer.mailchimp.com/documentation/mailchimp/guides/get-started-with-mailchimp-api-3/ Mailchimp API v3 Reference
+     * @see http://guzzle3.readthedocs.io/docs.html Guzzle Docs
      */
     public function request($method, $resource, array $options = [])
     {
@@ -129,13 +119,13 @@ class Larachimp {
 
         $resource = $this->baseuri . $resource;
 
-        $this->logRequest($method, $resource , $options);
+        $this->logRequest($method, $resource, $options);
 
         try {
             $response = $this->client->request($method, $resource, $options);
         } catch (\GuzzleHttp\Exception\ClientException $e) {
 
-            $this->log->error(
+            $this->logError(
                 "A \GuzzleHttp\Exception\ClientException has been thrown. Request: " .
                 var_export($e->getRequest(), true) . 
                 " - Response: " . var_export($e->getResponse()->getBody()->getContents(), true)
@@ -146,9 +136,7 @@ class Larachimp {
         $responseContents = $response->getBody()->getContents(); 
         $this->logResponse($responseContents);
         $decodedResponse = json_decode($responseContents);
-        $this->logInfo('JSON decode error ? ' . json_last_error_msg());
-        $this->logInfo('JSON Decoded Response = ' . var_export($decodedResponse, true));
-
+        
         return $decodedResponse;
 
     }

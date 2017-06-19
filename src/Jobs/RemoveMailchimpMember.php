@@ -9,29 +9,27 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 /**
- * Syncronizes a user's email in the configured Mailchimp list. If the user's 
- * email does not exist yet on the list, it creates it. If it exists already, 
- * it syncs up the subscribers status (Subscribed / Unsubscribed)
+ * Updates the user's email in the Mailchimp list
  */
-class SyncMailchimpMember implements SelfHandling, ShouldQueue
+class RemoveMailchimpMember implements SelfHandling, ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 
     /**
-     * An instance object that can be synced as a Mailchimp List member.
-     *
-     * @var \DiegoCaprioli\Larachimp\Models\LarachimpListMember
+     * The old email that needs to be replaced with the new one on the member
+     * 
+     * @var string
      */
-    private $member;
+    private $email;
 
     /**
      * Create a new job instance.
      * 
      * @param \DiegoCaprioli\Larachimp\Models\LarachimpListMember $member
      */
-    public function __construct(LarachimpListMember $member)
-    {
-        $this->member = $member;
+    public function __construct($email)
+    {        
+        $this->email = $email;
     }
 
     /**
@@ -43,7 +41,7 @@ class SyncMailchimpMember implements SelfHandling, ShouldQueue
         // on/off switch
         if (!empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
             $manager = App::make(MailchimpManager::class);
-            $manager->syncMember($this->member);
+            $manager->removeListMember($this->email);
         }        
     }
 }

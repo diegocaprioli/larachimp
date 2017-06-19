@@ -5,7 +5,7 @@ use Illuminate\Support\ServiceProvider;
 
 class LarachimpServiceProvider extends ServiceProvider {
 
-	/**
+    /**
      * Register paths to be published by the publish command.
      *
      * @return void
@@ -25,9 +25,9 @@ class LarachimpServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->app->singleton('diegocaprioli_larachimp', function ($app) {
+        $this->app->singleton('diegocaprioli_larachimp', function($app) {
             $config = config('diegocaprioli.larachimp.larachimp');
-            $larachimp = new Larachimp($this->app->make('log'));
+            $larachimp = new Larachimp($app->make('log'));
             $larachimp->initialize($config['apikey'], $config['baseuri']);
             return $larachimp;
         });

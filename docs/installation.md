@@ -5,7 +5,7 @@ Add the following to your composer.json
 ```json
 {
     "require": {
-        "diegocaprioli/larachimp": "~0.3"
+        "diegocaprioli/larachimp": "~0.4"
     },
     "repositories": [        
         {

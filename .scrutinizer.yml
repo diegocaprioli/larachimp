@@ -16,5 +16,5 @@ checks:
   php:
     code_rating: true
 
-builds:
+build:
   tests: false    

@@ -11,6 +11,10 @@ tools:
   php_changetracking: true
   php_cs_fixer:
       config: { level: psr2 }
+
 checks:
   php:
     code_rating: true
+
+builds:
+  tests: false    

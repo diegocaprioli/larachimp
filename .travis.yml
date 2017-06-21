@@ -9,6 +9,6 @@ install:
 
 
 script:  
-  - ./vendor/bin/phpunit --whitelist ./tests --coverage-clover ./coverage.xml --colors=always
+  - ./vendor/bin/phpunit ./tests --colors=always --coverage-clover ./coverage.xml
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload  --format=php-clover coverage.xml

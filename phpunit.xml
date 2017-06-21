@@ -1,6 +1,8 @@
 <phpunit>
 
 	<filter>
+		
+		<!-- Whitelisting the source files that should be analized for test coverage -->
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<directory suffix=".php">./</directory>
 			<exclude>
@@ -8,6 +10,7 @@
 				<directory suffix=".php">./vendor</directory>
 			</exclude>
 		</whitelist>
+
 	</filter>
 
 </phpunit>

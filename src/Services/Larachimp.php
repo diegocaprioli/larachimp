@@ -141,6 +141,70 @@ class Larachimp {
 
     }
 
+    /**
+     * Makes a simple GET API request to Mailchimp. 
+     * 
+     * @param  string $resource The resource     
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
+     * @return mixed The json_decode'd version of the response body 
+     * @see    Larachimp::request()
+     */
+    public function get($resource, array $options = [])
+    {
+        return $this->request('GET', $resource, $options);
+    }
+
+    /**
+     * Makes a simple POST API request to Mailchimp. 
+     * 
+     * @param  string $resource The resource     
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
+     * @return mixed The json_decode'd version of the response body 
+     * @see    Larachimp::request()
+     */
+    public function post($resource, array $options = [])
+    {
+        return $this->request('POST', $resource, $options);
+    }
+
+    /**
+     * Makes a simple PATCH API request to Mailchimp. 
+     * 
+     * @param  string $resource The resource     
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
+     * @return mixed The json_decode'd version of the response body 
+     * @see    Larachimp::request()
+     */
+    public function patch($resource, array $options = [])
+    {
+        return $this->request('PATCH', $resource, $options);
+    }
+
+    /**
+     * Makes a simple PUT API request to Mailchimp. 
+     * 
+     * @param  string $resource The resource     
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
+     * @return mixed The json_decode'd version of the response body 
+     * @see    Larachimp::request()
+     */
+    public function put($resource, array $options = [])
+    {
+        return $this->request('PUT', $resource, $options);
+    }
+
+    /**
+     * Makes a simple DELETE API request to Mailchimp. 
+     * 
+     * @param  string $resource The resource     
+     * @param  array $options An array of request options, as accepted by Guzzle Client request method
+     * @return mixed The json_decode'd version of the response body 
+     * @see    Larachimp::request()
+     */
+    public function delete($resource, array $options = [])
+    {
+        return $this->request('DELETE', $resource, $options);
+    }
 
 
 }

@@ -7,7 +7,7 @@ class LarachimpTest extends BaseTestCase {
 
 	public function test_it_connects_to_api_properly()
 	{		
-		$response = LarachimpFacade::request('GET', '');
+		$response = LarachimpFacade::get('');
 	}
 
 }

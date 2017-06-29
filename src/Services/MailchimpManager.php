@@ -43,11 +43,11 @@ class MailchimpManager
             throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
         }
 
-        $response = LarachimpFacade::request('GET', 'lists/' . $this->listId, [
+        $response = LarachimpFacade::get('lists/' . $this->listId, [
             'query' => ['fields' => 'id,web_id,name'],
         ]);
         if (empty($response)) {
-            throw new \Exception('The Mailchimp List does not exists. Please verify the list_id configuration.');
+            throw new \Exception('The Mailchimp List "' . $this->listId . '" does not exists. Please verify the list_id configuration.');
         }
     }
 
@@ -65,7 +65,7 @@ class MailchimpManager
      */
     public function searchMember($email)
     {
-        $response = LarachimpFacade::request('GET', 'search-members', [
+        $response = LarachimpFacade::get('search-members', [
             'query' => [
                 'query' => $email,
                 'list_id' => $this->listId,
@@ -96,7 +96,7 @@ class MailchimpManager
      */
     public function addListMember(LarachimpListMember $member)
     {
-        return LarachimpFacade::request('POST', 'lists/' . $this->listId . '/members', [
+        return LarachimpFacade::post('lists/' . $this->listId . '/members', [
             'body' => json_encode([
                 'email_address' => $member->getEmail(),
                 'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
@@ -115,7 +115,7 @@ class MailchimpManager
      */
     public function updateListMember(LarachimpListMember $member, $subscriberHash)
     {
-        return LarachimpFacade::request('PATCH', 'lists/' . $this->listId . '/members/' . $subscriberHash, [
+        return LarachimpFacade::patch('lists/' . $this->listId . '/members/' . $subscriberHash, [
             'body' => json_encode([
                 'status' => $member->isSubscribedToMailchimpList() ? 'subscribed' : 'unsubscribed',
         	]),
@@ -136,7 +136,7 @@ class MailchimpManager
             throw new \Exception('There\'s no Mailchimp member in the list with the email \'' . $email . '\'.');
         }
 
-        LarachimpFacade::request('DELETE', 'lists/' . $this->listId . '/members/' . $member->id);
+        LarachimpFacade::delete('lists/' . $this->listId . '/members/' . $member->id);
     }
 
 

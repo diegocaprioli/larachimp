@@ -14,7 +14,7 @@ This is it's simplest usage mode. It allows to communicate in a simple and compl
 
 Any request made will be automatically logged into the Laravel log, specifying the API Request made and the API Response received.
 
-You can also directly call these convinience methods instead of `request()`:
+You can also directly call these convenience methods instead of `request()`:
 * `LarachimpFacade::get($resource, $options);`
 * `LarachimpFacade::post($resource, $options);`
 * `LarachimpFacade::patch($resource, $options);`

@@ -60,7 +60,7 @@ return [
     | you will find Extras -> API keys. Paste the key below.
     |
     */
-    'apikey' => '',
+    'api_key' => '',
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return [
     | for more information.
     |
     */
-    'baseuri' => 'https://us1.api.mailchimp.com/3.0/',
+    'base_uri' => 'https://us1.api.mailchimp.com/3.0/',
 
     /*
     |--------------------------------------------------------------------------

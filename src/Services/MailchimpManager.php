@@ -39,8 +39,8 @@ class MailchimpManager
      */
     protected function verifyList()
     {        
-        if (empty(config('diegocaprioli.larachimp.larachimp.apikey'))) {
-            throw new \Exception('The Mailchimp API key is not properly set. Please verify the apikey configuration.');
+        if (empty(config('diegocaprioli.larachimp.larachimp.api_key'))) {
+            throw new \Exception('The Mailchimp API key is not properly set. Please verify the api_key configuration.');
         }
 
         $response = LarachimpFacade::get('lists/' . $this->listId, [

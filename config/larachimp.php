@@ -10,7 +10,7 @@ return [
     | you will find Extras -> API keys. Paste the key below.
     |
     */
-    'apikey' => env('MAILCHIMP_API_KEY', ''),
+    'api_key' => env('MAILCHIMP_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ return [
     | for more information.
     |
     */
-    'baseuri' => env('MAILCHIMP_BASE_URI', 'https://us1.api.mailchimp.com/3.0/'),
+    'base_uri' => env('MAILCHIMP_BASE_URI', 'https://us1.api.mailchimp.com/3.0/'),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,11 +48,11 @@ return [
     | Log error level
     |--------------------------------------------------------------------------
     |    
-    | Specifies which level of errors should be logged by the package.
-    | info: logs everything (API requests, responses and any errors)
+    | Specifies which level of messages should be logged by the package.
+    | info: logs everything, useful for debugging (API requests, responses and any errors)
     | error: only logs errors
     |
     */
-    'log_level' => env('LARACHIMP_LOG_LEVEL', 'error'), // info, error
+    'log_level' => env('LARACHIMP_LOG_LEVEL', 'error'), // Options available: info, error
 
 ];

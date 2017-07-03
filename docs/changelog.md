@@ -10,4 +10,4 @@
 * Added the convenience methods get, post, patch, put and delete to the LarachimpFacade.
 
 ## v0.4 (2017-06-19)
-* The changelog start here!
+* The changelog starts here!

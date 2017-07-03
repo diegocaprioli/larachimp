@@ -10,7 +10,7 @@ And also a not so simple syncronization feature for your laravel app users.
 * [Basic Usage](/docs/basic-usage.md)
 * [Full Featured Usage](/docs/full-featured-usage.md)
 
-
+You can also read about Larachimp in this blog post: [Larachimp: The Mailchimp steward for your Laravel project](http://www.diegocaprioli.com/larachimp-the-mailchimp-steward-for-your-laravel-project/).
 
 
 

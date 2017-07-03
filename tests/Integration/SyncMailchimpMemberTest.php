@@ -55,7 +55,7 @@ class SyncMailchimpMemberTest extends BaseTestCase {
 	protected function instanciateNewMember($subscribed = false)
 	{
 		$faker = \Faker\Factory::create();
-		return new Member($faker->name, 'test-' . $faker->username . '@siterocket.com', $subscribed);
+		return new Member($faker->firstName, $faker->lastName, 'test-' . $faker->username . '@siterocket.com', $subscribed);
 	}
 	
 
@@ -167,18 +167,21 @@ class SyncMailchimpMemberTest extends BaseTestCase {
 
 class Member implements LarachimpListMember {
 
-	public $name;
+	public $firstName;
+	public $lastName;
 	public $email;
 	public $receiveNews;
 
-	public function __construct($name, $email, $receiveNews)
+	public function __construct($first, $last, $email, $receiveNews)
 	{
-		$this->name = $name;
+		$this->firstName = $first;
+		$this->lastName = $last;
 		$this->email = $email;
 		$this->receiveNews = $receiveNews;
 	}
 
-	public function getName() { return $this->name; }
+	public function getFirstName() { return $this->firstName; }
+	public function getLastName() { return $this->lastName; }
     public function getEmail() { return $this->email; }
     public function isSubscribedToMailchimpList() { return $this->receiveNews; }
 
